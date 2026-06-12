@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { MapPin, Phone, Mail, Instagram, ArrowRight, Loader2 } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { toast } from "sonner";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string;
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
@@ -108,16 +109,8 @@ function FieldInput({
           outline: "none",
           transition: "border-color 0.25s ease",
         }}
-        onFocus={(e) => {
-          e.currentTarget.style.borderBottomColor = error
-            ? "#c0392b"
-            : "rgba(212,175,55,0.6)";
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.borderBottomColor = error
-            ? "#c0392b"
-            : "rgba(212,175,55,0.2)";
-        }}
+        onFocus={(e) => { e.currentTarget.style.borderBottomColor = error ? "#c0392b" : "rgba(212,175,55,0.6)"; }}
+        onBlur={(e) => { e.currentTarget.style.borderBottomColor = error ? "#c0392b" : "rgba(212,175,55,0.2)"; }}
       />
       {error && <span style={errorStyle}>{error}</span>}
     </div>
@@ -125,6 +118,8 @@ function FieldInput({
 }
 
 export function ContactPage() {
+  const isMobile = useIsMobile();
+
   const {
     register,
     handleSubmit,
@@ -148,7 +143,6 @@ export function ContactPage() {
         },
         { publicKey: EMAILJS_PUBLIC_KEY }
       );
-
       toast.success("Inquiry sent — we'll be in touch within two business days.");
       reset();
     } catch {
@@ -163,20 +157,20 @@ export function ContactPage() {
         style={{
           maxWidth: 1440,
           margin: "0 auto",
-          padding: "80px 64px 72px",
+          padding: isMobile ? "56px 24px 48px" : "80px 64px 72px",
           borderBottom: "1px solid var(--border)",
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 64,
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? 24 : 64,
           alignItems: "end",
         }}
       >
         <div>
-          <p style={{ ...eyebrow, marginBottom: 32 }}>Contact</p>
+          <p style={{ ...eyebrow, marginBottom: 28 }}>Contact</p>
           <h1
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(48px, 5.5vw, 80px)",
+              fontSize: isMobile ? "40px" : "clamp(48px, 5.5vw, 80px)",
               fontWeight: 300,
               fontStyle: "italic",
               lineHeight: 1.08,
@@ -203,70 +197,55 @@ export function ContactPage() {
             maxWidth: 1440,
             margin: "0 auto",
             display: "grid",
-            gridTemplateColumns: "3fr 2fr",
+            gridTemplateColumns: isMobile ? "1fr" : "3fr 2fr",
           }}
         >
           {/* Form */}
-          <div style={{ padding: "72px 64px", borderRight: "1px solid var(--border)" }}>
-            <p style={{ ...eyebrow, marginBottom: 48 }}>Submit Inquiry</p>
+          <div
+            style={{
+              padding: isMobile ? "40px 24px" : "72px 64px",
+              borderRight: isMobile ? "none" : "1px solid var(--border)",
+              borderBottom: isMobile ? "1px solid var(--border)" : "none",
+            }}
+          >
+            <p style={{ ...eyebrow, marginBottom: 40 }}>Submit Inquiry</p>
 
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              style={{ display: "flex", flexDirection: "column", gap: 40 }}
-              noValidate
-            >
-              {/* Row 1: name + organization */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+            <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: 32 }} noValidate>
+              {/* Name + Organization */}
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 32 : 48 }}>
                 <FieldInput
-                  id="name"
-                  label="Name *"
-                  placeholder="Your full name"
+                  id="name" label="Name *" placeholder="Your full name"
                   error={errors.name?.message}
                   registration={register("name", { required: "Name is required" })}
                 />
                 <FieldInput
-                  id="organization"
-                  label="Organization"
-                  placeholder="Company / Organization (optional)"
+                  id="organization" label="Organization" placeholder="Company / Organization (optional)"
                   registration={register("organization")}
                 />
               </div>
 
-              {/* Row 2: phone + email */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+              {/* Phone + Email */}
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 32 : 48 }}>
                 <FieldInput
-                  id="telephone"
-                  label="Phone Number *"
-                  placeholder="+254 700 000 000"
-                  type="tel"
+                  id="telephone" label="Phone Number *" placeholder="+254 700 000 000" type="tel"
                   error={errors.telephone?.message}
                   registration={register("telephone", {
                     required: "Phone number is required",
-                    pattern: {
-                      value: /^[+\d\s\-()]{7,20}$/,
-                      message: "Enter a valid phone number",
-                    },
+                    pattern: { value: /^[+\d\s\-()]{7,20}$/, message: "Enter a valid phone number" },
                   })}
                 />
                 <FieldInput
-                  id="email"
-                  label="Email Address *"
-                  placeholder="you@example.com"
-                  type="email"
+                  id="email" label="Email Address *" placeholder="you@example.com" type="email"
                   error={errors.email?.message}
                   registration={register("email", {
                     required: "Email address is required",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Enter a valid email address",
-                    },
+                    pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Enter a valid email address" },
                   })}
                 />
               </div>
 
-              {/* Row 3: event type + date */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
-                {/* Event type select */}
+              {/* Event type + Date */}
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 32 : 48 }}>
                 <div>
                   <label style={labelStyle} htmlFor="eventType">Event Type</label>
                   <select
@@ -297,11 +276,8 @@ export function ContactPage() {
                     ))}
                   </select>
                 </div>
-
                 <FieldInput
-                  id="eventDate"
-                  label="Expected Event Date"
-                  placeholder="e.g. August 2025"
+                  id="eventDate" label="Expected Event Date" placeholder="e.g. August 2025"
                   registration={register("eventDate")}
                 />
               </div>
@@ -311,16 +287,14 @@ export function ContactPage() {
                 <label style={labelStyle} htmlFor="message">Message *</label>
                 <textarea
                   id="message"
-                  rows={5}
+                  rows={isMobile ? 4 : 5}
                   placeholder="Tell us about your event — vision, venue preferences, guest count, or anything else that matters to you…"
                   {...register("message", { required: "Please tell us about your event" })}
                   style={{
                     width: "100%",
                     background: "transparent",
                     border: "none",
-                    borderBottom: errors.message
-                      ? "1px solid #c0392b"
-                      : "1px solid rgba(212,175,55,0.2)",
+                    borderBottom: errors.message ? "1px solid #c0392b" : "1px solid rgba(212,175,55,0.2)",
                     padding: "14px 0",
                     fontFamily: "var(--font-body)",
                     fontSize: "15px",
@@ -330,29 +304,21 @@ export function ContactPage() {
                     resize: "none",
                     transition: "border-color 0.25s ease",
                   }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderBottomColor = errors.message
-                      ? "#c0392b"
-                      : "rgba(212,175,55,0.6)";
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderBottomColor = errors.message
-                      ? "#c0392b"
-                      : "rgba(212,175,55,0.2)";
-                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderBottomColor = errors.message ? "#c0392b" : "rgba(212,175,55,0.6)"; }}
+                  onBlur={(e) => { e.currentTarget.style.borderBottomColor = errors.message ? "#c0392b" : "rgba(212,175,55,0.2)"; }}
                 />
                 {errors.message && <span style={errorStyle}>{errors.message.message}</span>}
               </div>
 
               {/* Submit */}
-              <div style={{ paddingTop: 8 }}>
+              <div style={{ paddingTop: 4 }}>
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   style={{
                     background: "transparent",
                     border: "1px solid var(--border)",
-                    padding: "16px 40px",
+                    padding: isMobile ? "16px 24px" : "16px 40px",
                     fontFamily: "var(--font-body)",
                     fontSize: "10px",
                     fontWeight: 300,
@@ -365,6 +331,8 @@ export function ContactPage() {
                     gap: 10,
                     transition: "border-color 0.25s ease, color 0.25s ease",
                     opacity: isSubmitting ? 0.6 : 1,
+                    width: isMobile ? "100%" : "auto",
+                    justifyContent: isMobile ? "center" : "flex-start",
                   }}
                   onMouseEnter={(e) => {
                     if (!isSubmitting) {
@@ -374,20 +342,13 @@ export function ContactPage() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = "var(--border)";
-                    e.currentTarget.style.color = isSubmitting
-                      ? "var(--muted-foreground)"
-                      : "var(--foreground)";
+                    e.currentTarget.style.color = isSubmitting ? "var(--muted-foreground)" : "var(--foreground)";
                   }}
                 >
                   {isSubmitting ? (
-                    <>
-                      <Loader2 size={13} strokeWidth={1.5} style={{ animation: "spin 1s linear infinite" }} />
-                      Sending…
-                    </>
+                    <><Loader2 size={13} strokeWidth={1.5} style={{ animation: "spin 1s linear infinite" }} /> Sending…</>
                   ) : (
-                    <>
-                      Submit Inquiry <ArrowRight size={13} strokeWidth={1.5} />
-                    </>
+                    <>Submit Inquiry <ArrowRight size={13} strokeWidth={1.5} /></>
                   )}
                 </button>
               </div>
@@ -395,63 +356,36 @@ export function ContactPage() {
           </div>
 
           {/* Contact info */}
-          <div style={{ padding: "72px 64px" }}>
-            <p style={{ ...eyebrow, marginBottom: 48 }}>Get In Touch</p>
+          <div style={{ padding: isMobile ? "40px 24px" : "72px 64px" }}>
+            <p style={{ ...eyebrow, marginBottom: 40 }}>Get In Touch</p>
 
             {CONTACT_DETAILS.map((detail) => {
               const Icon = detail.icon;
               return (
-                <div
-                  key={detail.label}
-                  style={{ marginBottom: 48, paddingBottom: 48, borderBottom: "1px solid var(--border)" }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                <div key={detail.label} style={{ marginBottom: 36, paddingBottom: 36, borderBottom: "1px solid var(--border)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
                     <Icon size={13} strokeWidth={1.5} color="var(--accent)" />
-                    <span
-                      style={{
-                        fontFamily: "var(--font-body)",
-                        fontSize: "10px",
-                        fontWeight: 300,
-                        letterSpacing: "0.18em",
-                        textTransform: "uppercase",
-                        color: "var(--accent)",
-                      }}
-                    >
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "10px", fontWeight: 300, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--accent)" }}>
                       {detail.label}
                     </span>
                   </div>
-                  <p style={{ ...bodyText, fontSize: "14px", whiteSpace: "pre-line" }}>
-                    {detail.value}
-                  </p>
+                  <p style={{ ...bodyText, fontSize: "14px", whiteSpace: "pre-line" }}>{detail.value}</p>
                 </div>
               );
             })}
 
-            {/* Studio hours */}
             <div>
-              <p
-                style={{
-                  fontFamily: "var(--font-body)",
-                  fontSize: "10px",
-                  fontWeight: 300,
-                  letterSpacing: "0.18em",
-                  textTransform: "uppercase",
-                  color: "var(--accent)",
-                  marginBottom: 16,
-                }}
-              >
+              <p style={{ fontFamily: "var(--font-body)", fontSize: "10px", fontWeight: 300, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--accent)", marginBottom: 16 }}>
                 Studio Hours
               </p>
               {[
                 { day: "Monday – Friday", hours: "9:00 – 18:00" },
-                { day: "Saturday", hours: "10:00 – 14:00 (by appointment)" },
+                { day: "Saturday", hours: "10:00 – 14:00 (by appt.)" },
                 { day: "Sunday", hours: "Closed" },
               ].map(({ day, hours }) => (
-                <div key={day} style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+                <div key={day} style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, gap: 8 }}>
                   <span style={{ ...bodyText, fontSize: "13px" }}>{day}</span>
-                  <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300, color: "var(--muted-foreground)" }}>
-                    {hours}
-                  </span>
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300, color: "var(--muted-foreground)", textAlign: "right" }}>{hours}</span>
                 </div>
               ))}
             </div>
@@ -459,9 +393,7 @@ export function ContactPage() {
         </div>
       </section>
 
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-      `}</style>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </main>
   );
 }
