@@ -31,7 +31,6 @@ export function Navigation() {
         <div
           className="mx-auto flex items-center justify-between"
           style={{ maxWidth: 1440, padding: "0 24px", height: 72 }}
-          className="md:!px-[64px]"
         >
           <Link to="/" style={{ ...label, letterSpacing: "0.28em", fontSize: "11px", color: "var(--foreground)" }}>
             The Event Studio
