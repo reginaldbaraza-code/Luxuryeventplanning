@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router";
 import { useEffect } from "react";
+import { Toaster } from "sonner";
 import { Navigation } from "./components/Navigation";
 import { Footer } from "./components/Footer";
 import { HomePage } from "./components/HomePage";
@@ -37,6 +38,20 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Layout />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: "#1A0A2E",
+            border: "1px solid rgba(212,175,55,0.3)",
+            color: "#F5F0E8",
+            fontFamily: "var(--font-body)",
+            fontSize: "13px",
+            fontWeight: 300,
+            letterSpacing: "0.05em",
+          },
+        }}
+      />
     </BrowserRouter>
   );
 }

@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { MapPin, Phone, Mail, Instagram, ArrowRight } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { MapPin, Phone, Mail, Instagram, ArrowRight, Loader2 } from "lucide-react";
+import emailjs from "@emailjs/browser";
+import { toast } from "sonner";
+
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string;
 
 const eyebrow: React.CSSProperties = {
   fontFamily: "var(--font-body)",
@@ -18,20 +24,6 @@ const bodyText: React.CSSProperties = {
   color: "var(--muted-foreground)",
 };
 
-const inputStyle: React.CSSProperties = {
-  width: "100%",
-  background: "transparent",
-  border: "none",
-  borderBottom: "1px solid var(--border)",
-  padding: "14px 0",
-  fontFamily: "var(--font-body)",
-  fontSize: "15px",
-  fontWeight: 300,
-  color: "var(--foreground)",
-  outline: "none",
-  transition: "border-color 0.25s ease",
-};
-
 const labelStyle: React.CSSProperties = {
   fontFamily: "var(--font-body)",
   fontSize: "10px",
@@ -43,27 +35,21 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 8,
 };
 
+const errorStyle: React.CSSProperties = {
+  fontFamily: "var(--font-body)",
+  fontSize: "10px",
+  fontWeight: 300,
+  letterSpacing: "0.1em",
+  color: "#c0392b",
+  marginTop: 6,
+  display: "block",
+};
+
 const CONTACT_DETAILS = [
-  {
-    icon: MapPin,
-    label: "Location",
-    value: "Nairobi, Kenya",
-  },
-  {
-    icon: Phone,
-    label: "Telephone",
-    value: "+254 115 529 448\n+254 792 304 242",
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: "eventstudioke@gmail.com",
-  },
-  {
-    icon: Instagram,
-    label: "Instagram",
-    value: "@theeventstudio.ke",
-  },
+  { icon: MapPin,    label: "Location",  value: "Nairobi, Kenya" },
+  { icon: Phone,     label: "Telephone", value: "+254 115 529 448\n+254 792 304 242" },
+  { icon: Mail,      label: "Email",     value: "eventstudioke@gmail.com" },
+  { icon: Instagram, label: "Instagram", value: "@theeventstudio.ke" },
 ];
 
 const EVENT_TYPES = [
@@ -76,26 +62,98 @@ const EVENT_TYPES = [
   "Other",
 ];
 
+type FormValues = {
+  name: string;
+  organization: string;
+  telephone: string;
+  email: string;
+  eventType: string;
+  eventDate: string;
+  message: string;
+};
+
+function FieldInput({
+  id,
+  label,
+  error,
+  placeholder,
+  type = "text",
+  registration,
+}: {
+  id: string;
+  label: string;
+  error?: string;
+  placeholder: string;
+  type?: string;
+  registration: ReturnType<ReturnType<typeof useForm<FormValues>>["register"]>;
+}) {
+  return (
+    <div>
+      <label style={labelStyle} htmlFor={id}>{label}</label>
+      <input
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        {...registration}
+        style={{
+          width: "100%",
+          background: "transparent",
+          border: "none",
+          borderBottom: error ? "1px solid #c0392b" : "1px solid rgba(212,175,55,0.2)",
+          padding: "14px 0",
+          fontFamily: "var(--font-body)",
+          fontSize: "15px",
+          fontWeight: 300,
+          color: "var(--foreground)",
+          outline: "none",
+          transition: "border-color 0.25s ease",
+        }}
+        onFocus={(e) => {
+          e.currentTarget.style.borderBottomColor = error
+            ? "#c0392b"
+            : "rgba(212,175,55,0.6)";
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.borderBottomColor = error
+            ? "#c0392b"
+            : "rgba(212,175,55,0.2)";
+        }}
+      />
+      {error && <span style={errorStyle}>{error}</span>}
+    </div>
+  );
+}
+
 export function ContactPage() {
-  const [formState, setFormState] = useState({
-    name: "",
-    organization: "",
-    telephone: "",
-    email: "",
-    eventType: "",
-    eventDate: "",
-    message: "",
-  });
-  const [submitted, setSubmitted] = useState(false);
-  const [focused, setFocused] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({ mode: "onBlur" });
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    setFormState((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  }
+  async function onSubmit(data: FormValues) {
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: data.name,
+          organization: data.organization || "N/A",
+          telephone: data.telephone,
+          reply_to: data.email,
+          event_type: data.eventType || "Not specified",
+          event_date: data.eventDate || "Not specified",
+          message: data.message,
+        },
+        { publicKey: EMAILJS_PUBLIC_KEY }
+      );
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setSubmitted(true);
+      toast.success("Inquiry sent — we'll be in touch within two business days.");
+      reset();
+    } catch {
+      toast.error("Something went wrong. Please email us directly at eventstudioke@gmail.com");
+    }
   }
 
   return (
@@ -152,206 +210,188 @@ export function ContactPage() {
           <div style={{ padding: "72px 64px", borderRight: "1px solid var(--border)" }}>
             <p style={{ ...eyebrow, marginBottom: 48 }}>Submit Inquiry</p>
 
-            {submitted ? (
-              <div style={{ padding: "80px 0" }}>
-                <div style={{ width: 32, height: 1, background: "var(--accent)", marginBottom: 40 }} />
-                <h2
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "40px",
-                    fontWeight: 300,
-                    fontStyle: "italic",
-                    lineHeight: 1.15,
-                    color: "var(--foreground)",
-                    marginBottom: 24,
-                  }}
-                >
-                  Thank you, {formState.name.split(" ")[0]}.
-                </h2>
-                <p style={{ ...bodyText, maxWidth: 400 }}>
-                  Your inquiry has been received. A member of The Event Studio team will
-                  be in touch within two business days to discuss your event.
-                </p>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              style={{ display: "flex", flexDirection: "column", gap: 40 }}
+              noValidate
+            >
+              {/* Row 1: name + organization */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+                <FieldInput
+                  id="name"
+                  label="Name *"
+                  placeholder="Your full name"
+                  error={errors.name?.message}
+                  registration={register("name", { required: "Name is required" })}
+                />
+                <FieldInput
+                  id="organization"
+                  label="Organization"
+                  placeholder="Company / Organization (optional)"
+                  registration={register("organization")}
+                />
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-                {/* Row 1: name + organization */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
-                  <div>
-                    <label style={labelStyle} htmlFor="name">Name</label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      value={formState.name}
-                      onChange={handleChange}
-                      onFocus={() => setFocused("name")}
-                      onBlur={() => setFocused(null)}
-                      style={{
-                        ...inputStyle,
-                        borderBottomColor: focused === "name" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                      }}
-                      placeholder="Your full name"
-                    />
-                  </div>
-                  <div>
-                    <label style={labelStyle} htmlFor="organization">Organization</label>
-                    <input
-                      id="organization"
-                      name="organization"
-                      type="text"
-                      value={formState.organization}
-                      onChange={handleChange}
-                      onFocus={() => setFocused("organization")}
-                      onBlur={() => setFocused(null)}
-                      style={{
-                        ...inputStyle,
-                        borderBottomColor: focused === "organization" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                      }}
-                      placeholder="Company / Organization (optional)"
-                    />
-                  </div>
-                </div>
 
-                {/* Row 2: phone + email */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
-                  <div>
-                    <label style={labelStyle} htmlFor="telephone">Phone Number</label>
-                    <input
-                      id="telephone"
-                      name="telephone"
-                      type="tel"
-                      required
-                      value={formState.telephone}
-                      onChange={handleChange}
-                      onFocus={() => setFocused("telephone")}
-                      onBlur={() => setFocused(null)}
-                      style={{
-                        ...inputStyle,
-                        borderBottomColor: focused === "telephone" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                      }}
-                      placeholder="+254 700 000 000"
-                    />
-                  </div>
-                  <div>
-                    <label style={labelStyle} htmlFor="email">Email Address</label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={formState.email}
-                      onChange={handleChange}
-                      onFocus={() => setFocused("email")}
-                      onBlur={() => setFocused(null)}
-                      style={{
-                        ...inputStyle,
-                        borderBottomColor: focused === "email" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                      }}
-                      placeholder="you@example.com"
-                    />
-                  </div>
-                </div>
+              {/* Row 2: phone + email */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+                <FieldInput
+                  id="telephone"
+                  label="Phone Number *"
+                  placeholder="+254 700 000 000"
+                  type="tel"
+                  error={errors.telephone?.message}
+                  registration={register("telephone", {
+                    required: "Phone number is required",
+                    pattern: {
+                      value: /^[+\d\s\-()]{7,20}$/,
+                      message: "Enter a valid phone number",
+                    },
+                  })}
+                />
+                <FieldInput
+                  id="email"
+                  label="Email Address *"
+                  placeholder="you@example.com"
+                  type="email"
+                  error={errors.email?.message}
+                  registration={register("email", {
+                    required: "Email address is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Enter a valid email address",
+                    },
+                  })}
+                />
+              </div>
 
-                {/* Row 3: event type + date */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
-                  <div>
-                    <label style={labelStyle} htmlFor="eventType">Event Type</label>
-                    <select
-                      id="eventType"
-                      name="eventType"
-                      value={formState.eventType}
-                      onChange={handleChange}
-                      onFocus={() => setFocused("eventType")}
-                      onBlur={() => setFocused(null)}
-                      style={{
-                        ...inputStyle,
-                        borderBottomColor: focused === "eventType" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                        cursor: "pointer",
-                        appearance: "none" as const,
-                        WebkitAppearance: "none" as const,
-                      }}
-                    >
-                      <option value="" style={{ background: "#1A0A2E" }}>Select…</option>
-                      {EVENT_TYPES.map((t) => (
-                        <option key={t} value={t} style={{ background: "#1A0A2E" }}>{t}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label style={labelStyle} htmlFor="eventDate">Expected Event Date</label>
-                    <input
-                      id="eventDate"
-                      name="eventDate"
-                      type="text"
-                      value={formState.eventDate}
-                      onChange={handleChange}
-                      onFocus={() => setFocused("eventDate")}
-                      onBlur={() => setFocused(null)}
-                      style={{
-                        ...inputStyle,
-                        borderBottomColor: focused === "eventDate" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                      }}
-                      placeholder="e.g. August 2025"
-                    />
-                  </div>
-                </div>
-
-                {/* Message */}
+              {/* Row 3: event type + date */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+                {/* Event type select */}
                 <div>
-                  <label style={labelStyle} htmlFor="message">Message</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formState.message}
-                    onChange={handleChange}
-                    onFocus={() => setFocused("message")}
-                    onBlur={() => setFocused(null)}
-                    rows={5}
+                  <label style={labelStyle} htmlFor="eventType">Event Type</label>
+                  <select
+                    id="eventType"
+                    {...register("eventType")}
                     style={{
-                      ...inputStyle,
-                      borderBottomColor: focused === "message" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                      resize: "none",
+                      width: "100%",
+                      background: "transparent",
+                      border: "none",
+                      borderBottom: "1px solid rgba(212,175,55,0.2)",
+                      padding: "14px 0",
+                      fontFamily: "var(--font-body)",
+                      fontSize: "15px",
+                      fontWeight: 300,
+                      color: "var(--foreground)",
+                      outline: "none",
+                      cursor: "pointer",
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      transition: "border-color 0.25s ease",
                     }}
-                    placeholder="Tell us about your event — vision, venue preferences, guest count, or anything else that matters to you…"
-                  />
+                    onFocus={(e) => (e.currentTarget.style.borderBottomColor = "rgba(212,175,55,0.6)")}
+                    onBlur={(e) => (e.currentTarget.style.borderBottomColor = "rgba(212,175,55,0.2)")}
+                  >
+                    <option value="" style={{ background: "#1A0A2E" }}>Select…</option>
+                    {EVENT_TYPES.map((t) => (
+                      <option key={t} value={t} style={{ background: "#1A0A2E" }}>{t}</option>
+                    ))}
+                  </select>
                 </div>
 
-                {/* Submit */}
-                <div style={{ paddingTop: 8 }}>
-                  <button
-                    type="submit"
-                    style={{
-                      background: "transparent",
-                      border: "1px solid var(--border)",
-                      padding: "16px 40px",
-                      fontFamily: "var(--font-body)",
-                      fontSize: "10px",
-                      fontWeight: 300,
-                      letterSpacing: "0.22em",
-                      textTransform: "uppercase",
-                      color: "var(--foreground)",
-                      cursor: "pointer",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 10,
-                      transition: "border-color 0.25s ease, color 0.25s ease",
-                    }}
-                    onMouseEnter={(e) => {
+                <FieldInput
+                  id="eventDate"
+                  label="Expected Event Date"
+                  placeholder="e.g. August 2025"
+                  registration={register("eventDate")}
+                />
+              </div>
+
+              {/* Message */}
+              <div>
+                <label style={labelStyle} htmlFor="message">Message *</label>
+                <textarea
+                  id="message"
+                  rows={5}
+                  placeholder="Tell us about your event — vision, venue preferences, guest count, or anything else that matters to you…"
+                  {...register("message", { required: "Please tell us about your event" })}
+                  style={{
+                    width: "100%",
+                    background: "transparent",
+                    border: "none",
+                    borderBottom: errors.message
+                      ? "1px solid #c0392b"
+                      : "1px solid rgba(212,175,55,0.2)",
+                    padding: "14px 0",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "15px",
+                    fontWeight: 300,
+                    color: "var(--foreground)",
+                    outline: "none",
+                    resize: "none",
+                    transition: "border-color 0.25s ease",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderBottomColor = errors.message
+                      ? "#c0392b"
+                      : "rgba(212,175,55,0.6)";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderBottomColor = errors.message
+                      ? "#c0392b"
+                      : "rgba(212,175,55,0.2)";
+                  }}
+                />
+                {errors.message && <span style={errorStyle}>{errors.message.message}</span>}
+              </div>
+
+              {/* Submit */}
+              <div style={{ paddingTop: 8 }}>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    background: "transparent",
+                    border: "1px solid var(--border)",
+                    padding: "16px 40px",
+                    fontFamily: "var(--font-body)",
+                    fontSize: "10px",
+                    fontWeight: 300,
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    color: isSubmitting ? "var(--muted-foreground)" : "var(--foreground)",
+                    cursor: isSubmitting ? "not-allowed" : "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 10,
+                    transition: "border-color 0.25s ease, color 0.25s ease",
+                    opacity: isSubmitting ? 0.6 : 1,
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSubmitting) {
                       e.currentTarget.style.borderColor = "var(--accent)";
                       e.currentTarget.style.color = "var(--accent)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "var(--border)";
-                      e.currentTarget.style.color = "var(--foreground)";
-                    }}
-                  >
-                    Submit Inquiry <ArrowRight size={13} strokeWidth={1.5} />
-                  </button>
-                </div>
-              </form>
-            )}
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "var(--border)";
+                    e.currentTarget.style.color = isSubmitting
+                      ? "var(--muted-foreground)"
+                      : "var(--foreground)";
+                  }}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={13} strokeWidth={1.5} style={{ animation: "spin 1s linear infinite" }} />
+                      Sending…
+                    </>
+                  ) : (
+                    <>
+                      Submit Inquiry <ArrowRight size={13} strokeWidth={1.5} />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
 
           {/* Contact info */}
@@ -387,6 +427,7 @@ export function ContactPage() {
               );
             })}
 
+            {/* Studio hours */}
             <div>
               <p
                 style={{
@@ -417,6 +458,10 @@ export function ContactPage() {
           </div>
         </div>
       </section>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
     </main>
   );
 }
