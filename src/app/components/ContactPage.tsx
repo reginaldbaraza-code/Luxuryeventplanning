@@ -3,8 +3,6 @@ import { MapPin, Phone, Mail, Instagram, ArrowRight, Loader2 } from "lucide-reac
 import { toast } from "sonner";
 import { useIsMobile } from "../hooks/useIsMobile";
 
-const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as string;
-
 const eyebrow: React.CSSProperties = {
   fontFamily: "var(--font-body)",
   fontSize: "10px",
@@ -126,24 +124,21 @@ export function ContactPage() {
 
   async function onSubmit(data: FormValues) {
     try {
-      const res = await fetch("https://api.web3forms.com/submit", {
+      const res = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          access_key: WEB3FORMS_KEY,
-          subject: `New Enquiry from ${data.name}`,
-          from_name: data.name,
           name: data.name,
+          organization: data.organization,
+          telephone: data.telephone,
           email: data.email,
-          organization: data.organization || "N/A",
-          phone: data.telephone,
-          event_type: data.eventType || "Not specified",
-          event_date: data.eventDate || "Not specified",
+          eventType: data.eventType,
+          eventDate: data.eventDate,
           message: data.message,
         }),
       });
       const json = await res.json();
-      if (!res.ok || !json.success) throw new Error(json.message);
+      if (!res.ok || !json.success) throw new Error(json.error);
       toast.success("Inquiry sent — we'll be in touch within two business days.");
       reset();
     } catch {
