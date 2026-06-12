@@ -1,12 +1,9 @@
 import { useForm } from "react-hook-form";
 import { MapPin, Phone, Mail, Instagram, ArrowRight, Loader2 } from "lucide-react";
-import emailjs from "@emailjs/browser";
 import { toast } from "sonner";
 import { useIsMobile } from "../hooks/useIsMobile";
 
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID as string;
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as string;
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string;
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as string;
 
 const eyebrow: React.CSSProperties = {
   fontFamily: "var(--font-body)",
@@ -129,20 +126,24 @@ export function ContactPage() {
 
   async function onSubmit(data: FormValues) {
     try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `New Enquiry from ${data.name}`,
           from_name: data.name,
+          name: data.name,
+          email: data.email,
           organization: data.organization || "N/A",
-          telephone: data.telephone,
-          reply_to: data.email,
+          phone: data.telephone,
           event_type: data.eventType || "Not specified",
           event_date: data.eventDate || "Not specified",
           message: data.message,
-        },
-        { publicKey: EMAILJS_PUBLIC_KEY }
-      );
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message);
       toast.success("Inquiry sent — we'll be in touch within two business days.");
       reset();
     } catch {
