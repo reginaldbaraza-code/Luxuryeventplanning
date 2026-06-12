@@ -2,9 +2,9 @@ import { Link } from "react-router";
 import { ArrowRight, Check } from "lucide-react";
 
 const IMAGES = {
-  essentials: "https://images.unsplash.com/photo-1665607438186-7755c7f4dd30?w=900&h=700&fit=crop&auto=format",
-  signature: "https://images.unsplash.com/photo-1653821355736-0c2598d0a63e?w=900&h=700&fit=crop&auto=format",
-  maison: "https://images.unsplash.com/photo-1700514077430-3659e38eb5e7?w=900&h=700&fit=crop&auto=format",
+  coordination: "https://images.unsplash.com/photo-1665607438186-7755c7f4dd30?w=900&h=700&fit=crop&auto=format",
+  planning: "https://images.unsplash.com/photo-1653821355736-0c2598d0a63e?w=900&h=700&fit=crop&auto=format",
+  corporate: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=900&h=700&fit=crop&auto=format",
 };
 
 const eyebrow: React.CSSProperties = {
@@ -39,66 +39,53 @@ const navLink: React.CSSProperties = {
 
 const PACKAGES = [
   {
-    name: "Essentials",
+    name: "Event Coordination",
     tier: "01",
-    tagline: "For intimate gatherings",
-    scale: "Up to 60 guests",
-    price: "From KES 450,000",
-    desc: "Our foundational offering provides the full weight of the Studio's expertise for smaller, deeply personal events. Every detail receives the same level of care as our most elaborate productions.",
+    tagline: "You've planned the event. We bring it to life.",
+    desc: "Our coordination service is designed for clients who have done their own planning but need a dedicated professional to ensure flawless execution on the day. We align people, vendors, and timelines so everything runs smoothly.",
     services: [
-      "Initial concept consultation",
-      "Venue scouting and coordination",
-      "Décor concept and installation",
-      "Day-of coordination (10 hours)",
-      "Guest management and seating",
-      "Vendor liaison and briefing",
-      "Post-event debrief report",
+      "Vendor Coordination",
+      "Venue Liaison",
+      "Event Timeline Management",
+      "Event-Day Supervision",
+      "Troubleshooting & Support",
     ],
-    image: IMAGES.essentials,
-    imageAlt: "Elegantly set table with fine silverware and glassware",
+    image: IMAGES.coordination,
+    imageAlt: "Event coordinator arranging table settings",
     reverse: false,
   },
   {
-    name: "Signature",
+    name: "Event Planning & Management",
     tier: "02",
-    tagline: "For curated celebrations",
-    scale: "Up to 150 guests",
-    price: "From KES 950,000",
-    desc: "The Signature package is our most sought-after offering — a full-service creative partnership that encompasses every dimension of your event, from the first mood board to the final farewell.",
+    tagline: "Complete end-to-end event management.",
+    desc: "From initial concept to final execution, we handle every dimension of your event. This full-service package is ideal for clients who want a dedicated partner from the very first idea all the way through to the final farewell.",
     services: [
-      "Everything in Essentials",
-      "Full floral design and installation",
-      "Custom lighting design and rigging",
-      "Entertainment curation and direction",
-      "Stationery design and production",
-      "Weekend-long coordination (two days)",
-      "Photography and film direction brief",
-      "On-site styling team (three specialists)",
+      "Budget Creation",
+      "Venue Sourcing",
+      "Vendor Management",
+      "Guest Management",
+      "Event Timeline Development",
+      "Event Execution",
     ],
-    image: IMAGES.signature,
-    imageAlt: "Candlelit intimate table setting with floral arrangements",
+    image: IMAGES.planning,
+    imageAlt: "Elegant candlelit table setting with floral arrangements",
     reverse: true,
   },
   {
-    name: "Maison",
+    name: "Conferences & Corporate Events",
     tier: "03",
-    tagline: "For legacy events",
-    scale: "Up to 300 guests",
-    price: "From KES 2,200,000",
-    desc: "Maison is our most complete engagement — a six-month creative residency culminating in an event of lasting cultural significance. Reserved for eight productions per year.",
+    tagline: "Professional management for impactful corporate experiences.",
+    desc: "Tailored for organizations that need structured, professional event management. We handle the complexity of large-scale corporate events so your team can focus on what matters most.",
     services: [
-      "Everything in Signature",
-      "Six-month dedicated planning engagement",
-      "International vendor access and curation",
-      "Bespoke installation architecture",
-      "Private pre-event dinner for principals",
-      "Full weekend residency team (eight specialists)",
-      "Post-event documentation and archive",
-      "Bespoke content creation and lookbook",
-      "First right of refusal for future events",
+      "Registration Management",
+      "Program Design",
+      "Speaker Coordination",
+      "AV Coordination",
+      "Catering Coordination",
+      "Post-Event Reporting",
     ],
-    image: IMAGES.maison,
-    imageAlt: "Grand ballroom event with tables and atmospheric lighting",
+    image: IMAGES.corporate,
+    imageAlt: "Grand conference setup with professional lighting",
     reverse: false,
   },
 ];
@@ -111,7 +98,7 @@ function PackageRow({ pkg }: { pkg: (typeof PACKAGES)[0] }) {
           maxWidth: 1440,
           margin: "0 auto",
           display: "grid",
-          gridTemplateColumns: pkg.reverse ? "1fr 1fr" : "1fr 1fr",
+          gridTemplateColumns: "1fr 1fr",
           direction: pkg.reverse ? "rtl" : "ltr",
         }}
       >
@@ -129,26 +116,13 @@ function PackageRow({ pkg }: { pkg: (typeof PACKAGES)[0] }) {
           <img
             src={pkg.image}
             alt={pkg.imageAlt}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              opacity: 0.78,
-              display: "block",
-            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.78, display: "block" }}
           />
         </div>
 
         {/* Content */}
         <div style={{ padding: "72px 64px", direction: "ltr" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "baseline",
-              gap: 16,
-              marginBottom: 32,
-            }}
-          >
+          <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 32 }}>
             <span
               style={{
                 fontFamily: "var(--font-body)",
@@ -178,53 +152,25 @@ function PackageRow({ pkg }: { pkg: (typeof PACKAGES)[0] }) {
           <h2
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(40px, 4vw, 64px)",
+              fontSize: "clamp(36px, 3.5vw, 56px)",
               fontWeight: 300,
               fontStyle: "italic",
-              lineHeight: 1.08,
+              lineHeight: 1.1,
               color: "var(--foreground)",
-              marginBottom: 8,
+              marginBottom: 32,
             }}
           >
             {pkg.name}
           </h2>
 
-          <p
-            style={{
-              fontFamily: "var(--font-body)",
-              fontSize: "10px",
-              fontWeight: 300,
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              color: "var(--muted-foreground)",
-              marginBottom: 32,
-            }}
-          >
-            {pkg.scale}
-          </p>
-
           <div style={{ width: 32, height: 1, background: "var(--border)", marginBottom: 32 }} />
 
           <p style={{ ...bodyText, fontSize: "14px", marginBottom: 40, maxWidth: 400 }}>{pkg.desc}</p>
 
-          {/* Services list */}
           <ul style={{ listStyle: "none", padding: 0, margin: "0 0 40px 0" }}>
             {pkg.services.map((svc) => (
-              <li
-                key={svc}
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 12,
-                  marginBottom: 12,
-                }}
-              >
-                <Check
-                  size={12}
-                  strokeWidth={1.5}
-                  color="var(--accent)"
-                  style={{ marginTop: 4, flexShrink: 0 }}
-                />
+              <li key={svc} style={{ display: "flex", alignItems: "flex-start", gap: 12, marginBottom: 12 }}>
+                <Check size={12} strokeWidth={1.5} color="var(--accent)" style={{ marginTop: 4, flexShrink: 0 }} />
                 <span
                   style={{
                     fontFamily: "var(--font-body)",
@@ -240,32 +186,25 @@ function PackageRow({ pkg }: { pkg: (typeof PACKAGES)[0] }) {
             ))}
           </ul>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              borderTop: "1px solid var(--border)",
-              paddingTop: 32,
-            }}
-          >
-            <p
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "22px",
-                fontWeight: 400,
-                color: "var(--foreground)",
-              }}
-            >
-              {pkg.price}
-            </p>
+          <div style={{ borderTop: "1px solid var(--border)", paddingTop: 32 }}>
             <Link
               to="/contact"
-              style={navLink}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--foreground)")}
+              style={{
+                ...navLink,
+                border: "1px solid var(--border)",
+                padding: "14px 28px",
+                transition: "border-color 0.25s, color 0.25s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "var(--accent)";
+                e.currentTarget.style.color = "var(--accent)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--border)";
+                e.currentTarget.style.color = "var(--foreground)";
+              }}
             >
-              Enquire <ArrowRight size={13} strokeWidth={1.5} />
+              Request This Package <ArrowRight size={13} strokeWidth={1.5} />
             </Link>
           </div>
         </div>
@@ -302,16 +241,15 @@ export function ServicesPage() {
               color: "var(--foreground)",
             }}
           >
-            Three paths to an extraordinary event.
+            What makes an event successful?
           </h1>
         </div>
 
         <div>
           <p style={{ ...bodyText, maxWidth: 440 }}>
-            Each engagement is a bespoke undertaking. The packages below represent starting
-            frameworks — in practice, every commission is tailored to the singular requirements
-            of the occasion and the client. All prices are guides; final proposals are presented
-            following an initial consultation.
+            It's more than just a beautiful venue. It's the perfect planning, coordination, and
+            execution. Every engagement is tailored to the singular requirements of your occasion.
+            Reach out for a consultation and we'll craft a bespoke proposal for your event.
           </p>
         </div>
       </section>
@@ -319,42 +257,6 @@ export function ServicesPage() {
       {PACKAGES.map((pkg) => (
         <PackageRow key={pkg.name} pkg={pkg} />
       ))}
-
-      {/* Bespoke note */}
-      <section style={{ padding: "80px 64px", borderBottom: "1px solid var(--border)" }}>
-        <div
-          style={{
-            maxWidth: 1440,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "1fr 2fr",
-            gap: 80,
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <p style={{ ...eyebrow, marginBottom: 20 }}>A Note on Pricing</p>
-            <h3
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(24px, 2.5vw, 36px)",
-                fontWeight: 300,
-                fontStyle: "italic",
-                lineHeight: 1.2,
-                color: "var(--foreground)",
-              }}
-            >
-              Every event is unique. So is every proposal.
-            </h3>
-          </div>
-          <p style={bodyText}>
-            The figures above are minimum investment guides. Most engagements exceed them based
-            on guest count, venue complexity, floral requirements, and vendor scope. We present
-            a detailed, itemised proposal following our initial consultation — there are no
-            hidden costs, and we do not work on commission from any vendor.
-          </p>
-        </div>
-      </section>
 
       {/* CTA */}
       <section style={{ padding: "96px 64px", textAlign: "center" }}>
@@ -370,7 +272,7 @@ export function ServicesPage() {
               marginBottom: 40,
             }}
           >
-            Ready to begin your event?
+            Ready to elevate your next event?
           </h2>
           <Link
             to="/contact"

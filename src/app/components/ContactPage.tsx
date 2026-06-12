@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { MapPin, Phone, Mail, Instagram, ArrowRight } from "lucide-react";
 
 const eyebrow: React.CSSProperties = {
   fontFamily: "var(--font-body)",
@@ -46,36 +46,43 @@ const labelStyle: React.CSSProperties = {
 const CONTACT_DETAILS = [
   {
     icon: MapPin,
-    label: "Studio",
-    value: "The Event Studio\n2nd Floor, Rosslyn Riviera\nGigiri, Nairobi 00621\nKenya",
+    label: "Location",
+    value: "Nairobi, Kenya",
   },
   {
     icon: Phone,
     label: "Telephone",
-    value: "+254 700 123 456",
+    value: "+254 115 529 448\n+254 792 304 242",
   },
   {
     icon: Mail,
     label: "Email",
-    value: "enquiries@theeventstudio.co.ke",
+    value: "eventstudioke@gmail.com",
+  },
+  {
+    icon: Instagram,
+    label: "Instagram",
+    value: "@theeventstudio.ke",
   },
 ];
 
 const EVENT_TYPES = [
-  "Private Celebration",
+  "Conference",
   "Corporate Event",
-  "Wedding",
-  "Social Gathering",
+  "Training Workshop",
+  "Networking Event",
+  "Birthday Celebration",
+  "Private Function",
   "Other",
 ];
 
 export function ContactPage() {
   const [formState, setFormState] = useState({
     name: "",
-    email: "",
+    organization: "",
     telephone: "",
+    email: "",
     eventType: "",
-    guestCount: "",
     eventDate: "",
     message: "",
   });
@@ -90,9 +97,6 @@ export function ContactPage() {
     e.preventDefault();
     setSubmitted(true);
   }
-
-  const focusedBorder = "1px solid rgba(212, 175, 55, 0.6)";
-  const normalBorder = "1px solid var(--border)";
 
   return (
     <main>
@@ -121,15 +125,15 @@ export function ContactPage() {
               color: "var(--foreground)",
             }}
           >
-            Let us begin a conversation.
+            Let's plan your next event.
           </h1>
         </div>
 
         <div>
           <p style={{ ...bodyText, maxWidth: 440 }}>
-            We welcome enquiries from clients who share our commitment to beauty and intention.
-            Initial consultations are complimentary and take place at our studio in Gigiri,
-            Nairobi, or by appointment at your preferred location.
+            We welcome enquiries from clients ready to create unforgettable experiences.
+            Get in touch and a member of our team will respond within two business days
+            to discuss your event and arrange an initial consultation.
           </p>
         </div>
       </section>
@@ -146,7 +150,7 @@ export function ContactPage() {
         >
           {/* Form */}
           <div style={{ padding: "72px 64px", borderRight: "1px solid var(--border)" }}>
-            <p style={{ ...eyebrow, marginBottom: 48 }}>Enquiry Form</p>
+            <p style={{ ...eyebrow, marginBottom: 48 }}>Submit Inquiry</p>
 
             {submitted ? (
               <div style={{ padding: "80px 0" }}>
@@ -165,16 +169,16 @@ export function ContactPage() {
                   Thank you, {formState.name.split(" ")[0]}.
                 </h2>
                 <p style={{ ...bodyText, maxWidth: 400 }}>
-                  Your enquiry has been received. A member of the Studio will be in touch within
-                  two business days to arrange your initial consultation.
+                  Your inquiry has been received. A member of The Event Studio team will
+                  be in touch within two business days to discuss your event.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-                {/* Row 1: name + email */}
+                {/* Row 1: name + organization */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
                   <div>
-                    <label style={labelStyle} htmlFor="name">Full Name</label>
+                    <label style={labelStyle} htmlFor="name">Name</label>
                     <input
                       id="name"
                       name="name"
@@ -188,7 +192,46 @@ export function ContactPage() {
                         ...inputStyle,
                         borderBottomColor: focused === "name" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
                       }}
-                      placeholder="Amina Hassan"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle} htmlFor="organization">Organization</label>
+                    <input
+                      id="organization"
+                      name="organization"
+                      type="text"
+                      value={formState.organization}
+                      onChange={handleChange}
+                      onFocus={() => setFocused("organization")}
+                      onBlur={() => setFocused(null)}
+                      style={{
+                        ...inputStyle,
+                        borderBottomColor: focused === "organization" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
+                      }}
+                      placeholder="Company / Organization (optional)"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 2: phone + email */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+                  <div>
+                    <label style={labelStyle} htmlFor="telephone">Phone Number</label>
+                    <input
+                      id="telephone"
+                      name="telephone"
+                      type="tel"
+                      required
+                      value={formState.telephone}
+                      onChange={handleChange}
+                      onFocus={() => setFocused("telephone")}
+                      onBlur={() => setFocused(null)}
+                      style={{
+                        ...inputStyle,
+                        borderBottomColor: focused === "telephone" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
+                      }}
+                      placeholder="+254 700 000 000"
                     />
                   </div>
                   <div>
@@ -206,30 +249,13 @@ export function ContactPage() {
                         ...inputStyle,
                         borderBottomColor: focused === "email" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
                       }}
-                      placeholder="amina@example.com"
+                      placeholder="you@example.com"
                     />
                   </div>
                 </div>
 
-                {/* Row 2: telephone + event type */}
+                {/* Row 3: event type + date */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
-                  <div>
-                    <label style={labelStyle} htmlFor="telephone">Telephone</label>
-                    <input
-                      id="telephone"
-                      name="telephone"
-                      type="tel"
-                      value={formState.telephone}
-                      onChange={handleChange}
-                      onFocus={() => setFocused("telephone")}
-                      onBlur={() => setFocused(null)}
-                      style={{
-                        ...inputStyle,
-                        borderBottomColor: focused === "telephone" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                      }}
-                      placeholder="+254 700 000 000"
-                    />
-                  </div>
                   <div>
                     <label style={labelStyle} htmlFor="eventType">Event Type</label>
                     <select
@@ -253,29 +279,8 @@ export function ContactPage() {
                       ))}
                     </select>
                   </div>
-                </div>
-
-                {/* Row 3: guest count + event date */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
                   <div>
-                    <label style={labelStyle} htmlFor="guestCount">Approximate Guest Count</label>
-                    <input
-                      id="guestCount"
-                      name="guestCount"
-                      type="text"
-                      value={formState.guestCount}
-                      onChange={handleChange}
-                      onFocus={() => setFocused("guestCount")}
-                      onBlur={() => setFocused(null)}
-                      style={{
-                        ...inputStyle,
-                        borderBottomColor: focused === "guestCount" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
-                      }}
-                      placeholder="80"
-                    />
-                  </div>
-                  <div>
-                    <label style={labelStyle} htmlFor="eventDate">Anticipated Date</label>
+                    <label style={labelStyle} htmlFor="eventDate">Expected Event Date</label>
                     <input
                       id="eventDate"
                       name="eventDate"
@@ -288,14 +293,14 @@ export function ContactPage() {
                         ...inputStyle,
                         borderBottomColor: focused === "eventDate" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
                       }}
-                      placeholder="March 2027"
+                      placeholder="e.g. August 2025"
                     />
                   </div>
                 </div>
 
                 {/* Message */}
                 <div>
-                  <label style={labelStyle} htmlFor="message">Tell Us About Your Event</label>
+                  <label style={labelStyle} htmlFor="message">Message</label>
                   <textarea
                     id="message"
                     name="message"
@@ -309,7 +314,7 @@ export function ContactPage() {
                       borderBottomColor: focused === "message" ? "rgba(212, 175, 55, 0.6)" : "rgba(212, 175, 55, 0.2)",
                       resize: "none",
                     }}
-                    placeholder="Share any initial thoughts on vision, venue preferences, or what matters most to you…"
+                    placeholder="Tell us about your event — vision, venue preferences, guest count, or anything else that matters to you…"
                   />
                 </div>
 
@@ -342,7 +347,7 @@ export function ContactPage() {
                       e.currentTarget.style.color = "var(--foreground)";
                     }}
                   >
-                    Submit Enquiry <ArrowRight size={13} strokeWidth={1.5} />
+                    Submit Inquiry <ArrowRight size={13} strokeWidth={1.5} />
                   </button>
                 </div>
               </form>
@@ -351,18 +356,14 @@ export function ContactPage() {
 
           {/* Contact info */}
           <div style={{ padding: "72px 64px" }}>
-            <p style={{ ...eyebrow, marginBottom: 48 }}>Studio Information</p>
+            <p style={{ ...eyebrow, marginBottom: 48 }}>Get In Touch</p>
 
             {CONTACT_DETAILS.map((detail) => {
               const Icon = detail.icon;
               return (
                 <div
                   key={detail.label}
-                  style={{
-                    marginBottom: 48,
-                    paddingBottom: 48,
-                    borderBottom: "1px solid var(--border)",
-                  }}
+                  style={{ marginBottom: 48, paddingBottom: 48, borderBottom: "1px solid var(--border)" }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                     <Icon size={13} strokeWidth={1.5} color="var(--accent)" />
@@ -379,20 +380,13 @@ export function ContactPage() {
                       {detail.label}
                     </span>
                   </div>
-                  <p
-                    style={{
-                      ...bodyText,
-                      fontSize: "14px",
-                      whiteSpace: "pre-line",
-                    }}
-                  >
+                  <p style={{ ...bodyText, fontSize: "14px", whiteSpace: "pre-line" }}>
                     {detail.value}
                   </p>
                 </div>
               );
             })}
 
-            {/* Hours */}
             <div>
               <p
                 style={{
@@ -412,23 +406,9 @@ export function ContactPage() {
                 { day: "Saturday", hours: "10:00 – 14:00 (by appointment)" },
                 { day: "Sunday", hours: "Closed" },
               ].map(({ day, hours }) => (
-                <div
-                  key={day}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: 10,
-                  }}
-                >
+                <div key={day} style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
                   <span style={{ ...bodyText, fontSize: "13px" }}>{day}</span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-body)",
-                      fontSize: "13px",
-                      fontWeight: 300,
-                      color: "var(--muted-foreground)",
-                    }}
-                  >
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: "13px", fontWeight: 300, color: "var(--muted-foreground)" }}>
                     {hours}
                   </span>
                 </div>
