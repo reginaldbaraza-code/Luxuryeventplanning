@@ -1,505 +1,399 @@
 import { Link } from "react-router";
-import { ArrowRight, ArrowDownRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { useIsMobile } from "../hooks/useIsMobile";
 
-const IMAGES = {
-  hero: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&h=1400&fit=crop&auto=format",
-  about: "https://images.unsplash.com/photo-1649615644613-758b850399c1?w=800&h=1100&fit=crop&auto=format",
-  gallery1: "https://images.unsplash.com/photo-1712314947761-a8d718bd8c32?w=1400&h=900&fit=crop&auto=format",
-  gallery2: "https://images.unsplash.com/photo-1710587384835-0f3de33d8042?w=700&h=900&fit=crop&auto=format",
-  gallery3: "https://images.unsplash.com/photo-1653821355736-0c2598d0a63e?w=700&h=500&fit=crop&auto=format",
+const WORK = {
+  hero: "/work/first-gig-hero.jpg",
+  full: "/work/first-gig-full.jpg",
 };
 
 const eyebrow: React.CSSProperties = {
   fontFamily: "var(--font-body)",
-  fontSize: "10px",
-  fontWeight: 300,
-  letterSpacing: "0.22em",
-  textTransform: "uppercase" as const,
+  fontSize: "11px",
+  fontWeight: 500,
+  letterSpacing: "0.2em",
+  textTransform: "uppercase",
   color: "var(--accent)",
 };
 
 const bodyText: React.CSSProperties = {
   fontFamily: "var(--font-body)",
-  fontSize: "15px",
-  fontWeight: 300,
-  lineHeight: 1.85,
+  fontSize: "16px",
+  fontWeight: 400,
+  lineHeight: 1.7,
   color: "var(--muted-foreground)",
-};
-
-const navLink: React.CSSProperties = {
-  fontFamily: "var(--font-body)",
-  fontSize: "11px",
-  fontWeight: 300,
-  letterSpacing: "0.18em",
-  textTransform: "uppercase" as const,
-  color: "var(--foreground)",
-  textDecoration: "none",
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 8,
 };
 
 const SERVICES = [
   {
-    name: "Event Coordination",
-    desc: "You've planned the event. We bring it to life.",
-    items: ["Vendor Coordination", "Venue Liaison", "Event Timeline Management", "Event-Day Supervision", "Troubleshooting & Support"],
+    name: "Backdrops & installs",
+    desc: "Statement arches, balloon work, florals — built for photos and the room.",
   },
   {
-    name: "Event Planning & Management",
-    desc: "Complete end-to-end event management.",
-    items: ["Budget Creation", "Venue Sourcing", "Vendor Management", "Guest Management", "Event Execution"],
+    name: "Day-of coordination",
+    desc: "Vendors, timeline, and calm on the floor so you stay with your guests.",
   },
   {
-    name: "Conferences & Corporate Events",
-    desc: "Professional management for impactful corporate experiences.",
-    items: ["Registration Management", "Speaker Coordination", "AV & Catering Coordination", "Post-Event Reporting"],
+    name: "Full planning",
+    desc: "From concept and budget through to the last clear-down.",
   },
-];
-
-const WHY_US = [
-  "Attention to Detail",
-  "Professional Event Execution",
-  "Trusted Vendor Network",
-  "Creative Event Solutions",
-  "Personalized Client Experience",
-  "Stress-Free Planning",
-];
-
-const INDUSTRIES = [
-  { icon: "🏢", label: "Corporate Organizations" },
-  { icon: "🌍", label: "NGOs & Development Partners" },
-  { icon: "🎓", label: "Universities & Training Institutions" },
-  { icon: "🏛", label: "Government Agencies" },
-  { icon: "🤝", label: "Professional Associations" },
-  { icon: "🎉", label: "Private Clients" },
 ];
 
 export function HomePage() {
   const isMobile = useIsMobile();
-  const px = isMobile ? "24px" : "64px";
+  const reduce = useReducedMotion();
+  const fade = reduce
+    ? {}
+    : {
+        initial: { opacity: 0, y: 18 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-10%" },
+        transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+      };
 
   return (
     <main>
-      {/* Hero */}
+      {/* Full-bleed hero — brand + one line + CTA on the real first-gig set */}
       <section
         style={{
-          display: "grid",
-          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-          minHeight: isMobile ? "auto" : "calc(100vh - 72px)",
+          position: "relative",
+          minHeight: "100svh",
+          display: "flex",
+          alignItems: "flex-end",
+          overflow: "hidden",
         }}
       >
-        <div
-          className="flex flex-col justify-between"
+        <motion.img
+          src={WORK.hero}
+          alt="Milestone backdrop with orange and white balloon garland and florals"
+          initial={reduce ? false : { scale: 1.06 }}
+          animate={reduce ? undefined : { scale: 1 }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
           style={{
-            padding: isMobile ? "56px 24px 48px" : "96px 64px 80px",
-            borderRight: isMobile ? "none" : "1px solid var(--border)",
-            borderBottom: isMobile ? "1px solid var(--border)" : "none",
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center 30%",
+          }}
+        />
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "var(--hero-scrim)",
+          }}
+        />
+
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            maxWidth: 1440,
+            margin: "0 auto",
+            padding: isMobile ? "0 24px 48px" : "0 64px 72px",
           }}
         >
-          <div>
-            <p style={eyebrow}>Nairobi, Kenya</p>
-          </div>
-
-          <div style={{ marginTop: isMobile ? 40 : 0 }}>
-            <h1
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: 24 }}
+            animate={reduce ? undefined : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p
               style={{
                 fontFamily: "var(--font-display)",
-                fontSize: isMobile ? "48px" : "clamp(52px, 5.5vw, 88px)",
-                fontWeight: 300,
+                fontSize: isMobile ? "42px" : "clamp(56px, 7vw, 96px)",
+                fontWeight: 400,
                 fontStyle: "italic",
-                lineHeight: 1.08,
-                color: "var(--foreground)",
-                marginBottom: 32,
-                maxWidth: 560,
+                lineHeight: 0.95,
+                color: "#F3EEE6",
+                marginBottom: 20,
+                letterSpacing: "-0.02em",
               }}
             >
-              Innovate. Execute. Elevate.
-            </h1>
-
-            <div style={{ width: 48, height: 1, background: "var(--accent)", marginBottom: 32 }} />
-
-            <p style={{ ...bodyText, maxWidth: 420, marginBottom: 48 }}>
-              Creating unforgettable event experiences through exceptional planning,
-              seamless coordination, and flawless execution.
+              yessiir.event studio
             </p>
-
-            <div
-              className="flex items-center"
-              style={{ gap: 24, flexWrap: "wrap" }}
+            <p
+              style={{
+                ...bodyText,
+                color: "rgba(243,238,230,0.82)",
+                maxWidth: 420,
+                marginBottom: 32,
+                fontSize: isMobile ? "15px" : "17px",
+              }}
             >
+              Spaces that mark the moment — Nairobi.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
               <Link
                 to="/contact"
                 style={{
-                  ...navLink,
-                  border: "1px solid var(--border)",
-                  padding: "14px 24px",
-                  transition: "border-color 0.25s, color 0.25s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--accent)";
-                  e.currentTarget.style.color = "var(--accent)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border)";
-                  e.currentTarget.style.color = "var(--foreground)";
+                  fontFamily: "var(--font-body)",
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  color: "var(--accent-foreground)",
+                  background: "var(--accent)",
+                  padding: "14px 22px",
                 }}
               >
-                Book a Consultation
+                Book a consult
               </Link>
-              <Link
-                to="/services"
-                style={navLink}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--foreground)")}
+              <a
+                href="#work"
+                style={{
+                  fontFamily: "var(--font-body)",
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  color: "#F3EEE6",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                }}
               >
-                View Our Services <ArrowRight size={14} strokeWidth={1.5} />
-              </Link>
+                See the work <ArrowRight size={14} strokeWidth={1.75} />
+              </a>
             </div>
-          </div>
-
-          {!isMobile && (
-            <div className="flex items-center" style={{ gap: 8 }}>
-              <ArrowDownRight size={14} strokeWidth={1} color="var(--muted-foreground)" />
-              <span style={{ ...eyebrow, color: "var(--muted-foreground)" }}>Scroll</span>
-            </div>
-          )}
+          </motion.div>
         </div>
-
-        {/* Hero photo — hidden on mobile to keep layout clean */}
-        {!isMobile && (
-          <div style={{ background: "#0E0620", position: "relative", overflow: "hidden" }}>
-            <img
-              src={IMAGES.hero}
-              alt="Elegant event setup with purple and gold lighting"
-              style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.75, display: "block" }}
-            />
-          </div>
-        )}
       </section>
 
-      {/* About intro */}
+      {/* One job: who we are */}
       <section style={{ borderBottom: "1px solid var(--border)" }}>
-        <div
+        <motion.div
+          {...fade}
           style={{
-            maxWidth: 1440,
+            maxWidth: 820,
             margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : "2fr 3fr",
+            padding: isMobile ? "64px 24px" : "96px 64px",
           }}
         >
-          {/* Photo — only shown on desktop */}
-          {!isMobile && (
-            <div
-              style={{
-                background: "#0E0620",
-                borderRight: "1px solid var(--border)",
-                overflow: "hidden",
-                minHeight: 520,
-              }}
-            >
-              <img
-                src={IMAGES.about}
-                alt="Formal dinner table setting"
-                style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8, display: "block" }}
-              />
-            </div>
-          )}
-
-          <div style={{ padding: isMobile ? "48px 24px" : "96px 80px" }}>
-            <p style={{ ...eyebrow, marginBottom: 24 }}>Bringing Your Vision to Life</p>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: isMobile ? "30px" : "clamp(36px, 3.5vw, 56px)",
-                fontWeight: 300,
-                lineHeight: 1.18,
-                color: "var(--foreground)",
-                marginBottom: 32,
-              }}
-            >
-              Every event should be memorable, impactful, and stress-free.
-            </h2>
-            <div style={{ width: 32, height: 1, background: "var(--border)", marginBottom: 32 }} />
-            <p style={{ ...bodyText, marginBottom: 20 }}>
-              At The Event Studio, whether you're planning a conference, corporate gathering,
-              training workshop, networking event, birthday celebration, or private function,
-              our team ensures every detail is handled with professionalism and care.
-            </p>
-            <p style={{ ...bodyText, marginBottom: 40 }}>
-              Based in Nairobi, Kenya, we partner with clients to create experiences that
-              inspire, engage, and leave lasting impressions.
-            </p>
-            <Link
-              to="/about"
-              style={navLink}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--foreground)")}
-            >
-              About the Studio <ArrowRight size={14} strokeWidth={1.5} />
-            </Link>
-          </div>
-        </div>
+          <p style={{ ...eyebrow, marginBottom: 20 }}>The studio</p>
+          <h2
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: isMobile ? "32px" : "clamp(36px, 4vw, 52px)",
+              fontWeight: 400,
+              fontStyle: "italic",
+              lineHeight: 1.15,
+              color: "var(--foreground)",
+              marginBottom: 24,
+            }}
+          >
+            Grateful for the past, excited for the next chapter.
+          </h2>
+          <p style={{ ...bodyText, marginBottom: 20 }}>
+            The Event Studio designs and builds celebration installs — backdrops, balloons,
+            florals — and runs the day so everything lands on time. Private milestones,
+            corporate gatherings, and the in-between.
+          </p>
+          <p style={{ ...bodyText, marginBottom: 36 }}>
+            Fresh off our first paid gig, and already obsessed with how a room feels when
+            people walk in.
+          </p>
+          <Link
+            to="/about"
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "13px",
+              fontWeight: 500,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              color: "var(--accent)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            About the studio <ArrowRight size={14} strokeWidth={1.75} />
+          </Link>
+        </motion.div>
       </section>
 
-      {/* Why choose us */}
-      <section style={{ borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1440, margin: "0 auto", padding: `0 ${px}` }}>
-          <div style={{ padding: `${isMobile ? "40px" : "64px"} 0 ${isMobile ? "32px" : "48px"}`, borderBottom: "1px solid var(--border)" }}>
-            <p style={eyebrow}>Why Choose The Event Studio</p>
-          </div>
+      {/* Featured work — first gig */}
+      <section id="work" style={{ borderBottom: "1px solid var(--border)" }}>
+        <div style={{ maxWidth: 1440, margin: "0 auto" }}>
+          <motion.div
+            {...fade}
+            style={{
+              padding: isMobile ? "48px 24px 28px" : "72px 64px 36px",
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              justifyContent: "space-between",
+              gap: 16,
+              alignItems: isMobile ? "flex-start" : "end",
+            }}
+          >
+            <div>
+              <p style={{ ...eyebrow, marginBottom: 12 }}>Featured work</p>
+              <h2
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: isMobile ? "28px" : "40px",
+                  fontStyle: "italic",
+                  fontWeight: 400,
+                  color: "var(--foreground)",
+                  margin: 0,
+                }}
+              >
+                First gig — milestone backdrop
+              </h2>
+            </div>
+            <p style={{ ...bodyText, maxWidth: 360, fontSize: "14px", margin: 0 }}>
+              Orange + white balloon garland, florals, and a custom quote board for a next-chapter
+              celebration.
+            </p>
+          </motion.div>
+
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(3, 1fr)",
+              gridTemplateColumns: isMobile ? "1fr" : "1.35fr 1fr",
+              gap: 0,
+              borderTop: "1px solid var(--border)",
             }}
           >
-            {WHY_US.map((reason, i) => {
-              const cols = isMobile ? 2 : 3;
-              const isLastInRow = (i + 1) % cols === 0;
-              const isInLastRow = i >= WHY_US.length - cols;
-              return (
-                <div
-                  key={reason}
-                  style={{
-                    padding: isMobile ? "28px 16px" : "40px 0",
-                    borderRight: !isLastInRow ? "1px solid var(--border)" : "none",
-                    borderBottom: !isInLastRow ? "1px solid var(--border)" : "none",
-                    paddingRight: !isLastInRow ? (isMobile ? 16 : 48) : 0,
-                    paddingLeft: i % cols !== 0 ? (isMobile ? 16 : 48) : 0,
-                  }}
-                >
-                  <span style={{ fontSize: 16, marginBottom: 10, display: "block" }}>✨</span>
-                  <p
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: isMobile ? "15px" : "18px",
-                      fontWeight: 300,
-                      fontStyle: "italic",
-                      color: "var(--foreground)",
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {reason}
-                  </p>
-                </div>
-              );
-            })}
+            <motion.div
+              {...fade}
+              style={{
+                borderRight: isMobile ? "none" : "1px solid var(--border)",
+                borderBottom: isMobile ? "1px solid var(--border)" : "none",
+                overflow: "hidden",
+                minHeight: isMobile ? 420 : 640,
+                background: "#1C1916",
+              }}
+            >
+              <img
+                src={WORK.hero}
+                alt="Styled milestone backdrop with florals and spotlight"
+                style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+              />
+            </motion.div>
+            <motion.div
+              {...fade}
+              transition={{ ...(fade as { transition?: object }).transition, delay: 0.1 }}
+              style={{ overflow: "hidden", minHeight: isMobile ? 480 : 640, background: "#1C1916" }}
+            >
+              <img
+                src={WORK.full}
+                alt="Full view of the arched quote board and balloon install"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center top",
+                  display: "block",
+                }}
+              />
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Services overview */}
+      {/* Services — one purpose */}
       <section style={{ borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1440, margin: "0 auto", padding: `0 ${px}` }}>
-          <div style={{ padding: `${isMobile ? "40px" : "64px"} 0 0`, borderBottom: "1px solid var(--border)" }}>
-            <p style={eyebrow}>Our Services</p>
-          </div>
-
+        <div style={{ maxWidth: 1440, margin: "0 auto", padding: isMobile ? "0 24px" : "0 64px" }}>
+          <motion.div {...fade} style={{ padding: isMobile ? "48px 0 24px" : "72px 0 32px" }}>
+            <p style={eyebrow}>What we do</p>
+          </motion.div>
           {SERVICES.map((svc, i) => (
-            <div
+            <motion.div
               key={svc.name}
+              {...fade}
+              transition={{ duration: 0.6, delay: i * 0.06 }}
               style={{
                 display: "grid",
-                gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr",
-                alignItems: "start",
-                padding: isMobile ? "32px 0" : "40px 0",
-                borderBottom: i < SERVICES.length - 1 ? "1px solid var(--border)" : "none",
-                gap: isMobile ? 16 : 48,
+                gridTemplateColumns: isMobile ? "1fr" : "1fr 1.4fr",
+                gap: isMobile ? 8 : 48,
+                padding: isMobile ? "28px 0" : "36px 0",
+                borderTop: "1px solid var(--border)",
               }}
             >
               <p
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontSize: isMobile ? "22px" : "26px",
-                  fontWeight: 300,
+                  fontSize: isMobile ? "24px" : "28px",
                   fontStyle: "italic",
+                  margin: 0,
                   color: "var(--foreground)",
                 }}
               >
                 {svc.name}
               </p>
-              <p style={{ ...bodyText, fontSize: "14px" }}>{svc.desc}</p>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                {svc.items.map((item) => (
-                  <li
-                    key={item}
-                    style={{
-                      ...bodyText,
-                      fontSize: "13px",
-                      paddingLeft: 16,
-                      position: "relative",
-                      marginBottom: 6,
-                    }}
-                  >
-                    <span style={{ position: "absolute", left: 0, color: "var(--accent)" }}>✔</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+              <p style={{ ...bodyText, margin: 0 }}>{svc.desc}</p>
+            </motion.div>
           ))}
-
-          <div style={{ padding: `${isMobile ? "32px" : "40px"} 0` }}>
+          <div style={{ padding: isMobile ? "28px 0 48px" : "36px 0 72px", borderTop: "1px solid var(--border)" }}>
             <Link
               to="/services"
-              style={navLink}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--foreground)")}
+              style={{
+                fontFamily: "var(--font-body)",
+                fontSize: "13px",
+                fontWeight: 500,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                color: "var(--accent)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+              }}
             >
-              View Full Services <ArrowRight size={14} strokeWidth={1.5} />
+              Full services <ArrowRight size={14} strokeWidth={1.75} />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Featured Events Gallery */}
-      <section style={{ borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1440, margin: "0 auto" }}>
-          <div
-            style={{
-              padding: `${isMobile ? "40px" : "64px"} ${px} ${isMobile ? "32px" : "48px"}`,
-              borderBottom: "1px solid var(--border)",
-            }}
-          >
-            <p style={eyebrow}>Featured Events</p>
-          </div>
-
-          {isMobile ? (
-            /* Mobile: single stacked image */
-            <div style={{ background: "#0E0620", overflow: "hidden", height: 280 }}>
-              <img
-                src={IMAGES.gallery1}
-                alt="Grand banquet hall with chandeliers"
-                style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.82, display: "block" }}
-              />
-            </div>
-          ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr" }}>
-              <div style={{ borderRight: "1px solid var(--border)", background: "#0E0620", overflow: "hidden", height: 580 }}>
-                <img src={IMAGES.gallery1} alt="Grand banquet hall" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.82, display: "block" }} />
-              </div>
-              <div style={{ display: "grid", gridTemplateRows: "1fr 1fr", height: 580 }}>
-                <div style={{ background: "#0E0620", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
-                  <img src={IMAGES.gallery2} alt="Luxury floral arrangement" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", opacity: 0.82, display: "block" }} />
-                </div>
-                <div style={{ background: "#0E0620", overflow: "hidden" }}>
-                  <img src={IMAGES.gallery3} alt="Candlelit table" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.82, display: "block" }} />
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div style={{ borderTop: "1px solid var(--border)", padding: `24px ${px}` }}>
-            <p style={{ ...bodyText, fontSize: "13px", fontStyle: "italic" }}>
-              "Every event tells a story. Here's a glimpse of the experiences we create."
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Industries we serve */}
-      <section style={{ borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1440, margin: "0 auto", padding: `0 ${px}` }}>
-          <div style={{ padding: `${isMobile ? "40px" : "64px"} 0 ${isMobile ? "32px" : "48px"}`, borderBottom: "1px solid var(--border)" }}>
-            <p style={eyebrow}>Industries We Serve</p>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(3, 1fr)" }}>
-            {INDUSTRIES.map((ind, i) => {
-              const cols = isMobile ? 2 : 3;
-              const isLastInRow = (i + 1) % cols === 0;
-              const isInLastRow = i >= INDUSTRIES.length - cols;
-              return (
-                <div
-                  key={ind.label}
-                  style={{
-                    padding: isMobile ? "24px 12px" : "36px 0",
-                    borderRight: !isLastInRow ? "1px solid var(--border)" : "none",
-                    borderBottom: !isInLastRow ? "1px solid var(--border)" : "none",
-                    paddingRight: !isLastInRow ? (isMobile ? 12 : 40) : 0,
-                    paddingLeft: i % cols !== 0 ? (isMobile ? 12 : 40) : 0,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                  }}
-                >
-                  <span style={{ fontSize: isMobile ? 18 : 20 }}>{ind.icon}</span>
-                  <p style={{ ...bodyText, fontSize: isMobile ? "13px" : "14px", color: "var(--foreground)" }}>{ind.label}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Client promise + CTA */}
-      <section style={{ padding: isMobile ? "72px 24px" : "120px 64px", textAlign: "center" }}>
-        <div style={{ maxWidth: 1440, margin: "0 auto" }}>
-          <p style={{ ...eyebrow, marginBottom: 28, color: "var(--muted-foreground)" }}>Our Client Promise</p>
+      {/* CTA */}
+      <section style={{ padding: isMobile ? "72px 24px" : "112px 64px", textAlign: "center" }}>
+        <motion.div {...fade} style={{ maxWidth: 640, margin: "0 auto" }}>
+          <p style={{ ...eyebrow, marginBottom: 20, color: "var(--muted-foreground)" }}>Next chapter</p>
           <h2
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: isMobile ? "36px" : "clamp(40px, 5vw, 72px)",
-              fontWeight: 300,
+              fontSize: isMobile ? "36px" : "56px",
               fontStyle: "italic",
+              fontWeight: 400,
               lineHeight: 1.1,
               color: "var(--foreground)",
-              marginBottom: 16,
+              marginBottom: 20,
             }}
           >
-            You focus on your guests.
+            Tell us the date. We&apos;ll shape the room.
           </h2>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: isMobile ? "36px" : "clamp(40px, 5vw, 72px)",
-              fontWeight: 300,
-              fontStyle: "italic",
-              lineHeight: 1.1,
-              color: "var(--accent)",
-              marginBottom: 32,
-            }}
-          >
-            We focus on the details.
-          </h2>
-          <p style={{ ...bodyText, maxWidth: 520, margin: "0 auto 48px" }}>
-            From concept to completion, we are committed to delivering events that exceed expectations.
+          <p style={{ ...bodyText, marginBottom: 36 }}>
+            Nairobi and nearby — private celebrations, brand moments, and everything that needs
+            to look as good as it feels.
           </p>
-          <div style={{ width: 1, height: 48, background: "var(--border)", margin: "0 auto 40px" }} />
-          <div
-            className="flex items-center justify-center"
-            style={{ gap: 24, flexWrap: "wrap" }}
+          <Link
+            to="/contact"
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: "13px",
+              fontWeight: 500,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              color: "var(--accent-foreground)",
+              background: "var(--accent)",
+              padding: "14px 28px",
+              display: "inline-block",
+            }}
           >
-            <Link
-              to="/contact"
-              style={{
-                ...navLink,
-                border: "1px solid var(--border)",
-                padding: "14px 24px",
-                transition: "border-color 0.25s, color 0.25s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--accent)";
-                e.currentTarget.style.color = "var(--accent)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.color = "var(--foreground)";
-              }}
-            >
-              Request a Quote
-            </Link>
-            <Link
-              to="/contact"
-              style={navLink}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--accent)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--foreground)")}
-            >
-              Contact Us <ArrowRight size={14} strokeWidth={1.5} />
-            </Link>
-          </div>
-        </div>
+            Request a quote
+          </Link>
+        </motion.div>
       </section>
     </main>
   );

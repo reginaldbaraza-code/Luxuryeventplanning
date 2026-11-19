@@ -42,13 +42,13 @@ export default function App() {
         position="bottom-right"
         toastOptions={{
           style: {
-            background: "#1A0A2E",
-            border: "1px solid rgba(212,175,55,0.3)",
-            color: "#F5F0E8",
+            background: "#1C1916",
+            border: "1px solid rgba(255,106,0,0.35)",
+            color: "#F3EEE6",
             fontFamily: "var(--font-body)",
             fontSize: "13px",
-            fontWeight: 300,
-            letterSpacing: "0.05em",
+            fontWeight: 400,
+            letterSpacing: "0.04em",
           },
         }}
       />
