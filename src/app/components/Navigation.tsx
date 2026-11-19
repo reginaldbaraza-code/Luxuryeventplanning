@@ -32,8 +32,8 @@ export function Navigation() {
           className="mx-auto flex items-center justify-between"
           style={{ maxWidth: 1440, padding: "0 24px", height: 72 }}
         >
-          <Link to="/" style={{ ...label, letterSpacing: "0.14em", fontSize: "12px", color: "var(--foreground)", textTransform: "none", fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 400 }}>
-            yessiir.event studio
+          <Link to="/" style={{ ...label, letterSpacing: "0.2em", fontSize: "11px", color: "var(--foreground)", fontWeight: 500 }}>
+            The Event Studio
           </Link>
 
           <div className="hidden md:flex items-center" style={{ gap: 48 }}>

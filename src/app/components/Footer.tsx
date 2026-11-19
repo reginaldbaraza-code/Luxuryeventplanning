@@ -31,10 +31,10 @@ export function Footer() {
           }}
         >
           <div>
-            <p style={{ ...tiny, color: "var(--foreground)", letterSpacing: "0.06em", marginBottom: 4, fontSize: "16px", textTransform: "none", fontFamily: "var(--font-display)", fontStyle: "italic", fontWeight: 400 }}>
-              yessiir.event studio
+            <p style={{ ...tiny, color: "var(--foreground)", letterSpacing: "0.2em", marginBottom: 4, fontSize: "12px", fontWeight: 500 }}>
+              The Event Studio
             </p>
-            <p style={{ ...tiny, letterSpacing: "0.16em" }}>Nairobi · spaces that mark the moment</p>
+            <p style={{ ...tiny, letterSpacing: "0.14em" }}>Nairobi, Kenya · Planning &amp; styling</p>
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 24 : 40, flexWrap: "wrap" }}>
